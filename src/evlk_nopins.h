@@ -55,15 +55,15 @@ namespace _EVLK_NOPINS_
         nopinRegister(uint8_t groupNum, pin_size_t unitNum, pin_size_t maphead);
         virtual ~nopinRegister();
 
-        virtual void pinMode(nopin_size_t pin, PinMode mode) = 0;
-        virtual void digitalWrite(nopin_size_t pin, PinStatus val) = 0;
-        virtual PinStatus digitalRead(nopin_size_t pin) = 0;
-        virtual void analogWrite(nopin_size_t pin, int val) = 0;
+        virtual void pinMode(nopin_size_t &pin, PinMode mode) = 0;
+        virtual void digitalWrite(nopin_size_t &pin, PinStatus val) = 0;
+        virtual PinStatus digitalRead(nopin_size_t &pin) = 0;
+        virtual void analogWrite(nopin_size_t &pin, int val) = 0;
         virtual void analogReference(uint8_t mode) = 0;
-        virtual int analogRead(nopin_size_t pin) = 0;
+        virtual int analogRead(nopin_size_t &pin) = 0;
         void analogReadResolution(int bits);
-        void pinMode(nopin_size_t pin, int mode);
-        void digitalWrite(nopin_size_t pin, int status);
+        void pinMode(nopin_size_t &pin, int mode);
+        void digitalWrite(nopin_size_t &pin, int status);
 
         bool isIn(const nopin_size_t &pin);
         pin_size_t groupNum(nopin_size_t &pin);
@@ -75,12 +75,12 @@ namespace _EVLK_NOPINS_
     {
     public:
         o2nopin() : nopinRegister(0, 0){};
-        void pinMode(nopin_size_t pin, PinMode mode) override;
-        void digitalWrite(nopin_size_t pin, PinStatus val) override;
-        PinStatus digitalRead(nopin_size_t pin) override;
-        void analogWrite(nopin_size_t pin, int val) override;
+        void pinMode(nopin_size_t &pin, PinMode mode) override;
+        void digitalWrite(nopin_size_t &pin, PinStatus val) override;
+        PinStatus digitalRead(nopin_size_t &pin) override;
+        void analogWrite(nopin_size_t &pin, int val) override;
         void analogReference(uint8_t mode) override;
-        int analogRead(nopin_size_t pin) override;
+        int analogRead(nopin_size_t &pin) override;
     };
 
     extern o2nopin O2nopin;
