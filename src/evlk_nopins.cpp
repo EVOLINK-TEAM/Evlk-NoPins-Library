@@ -62,8 +62,8 @@ namespace _EVLK_NOPINS_
         : GroupNum(groupNum), UnitNum(unitNum), pins(creatPinArr(groupNum, unitNum, maps)){};
     nopinRegister::nopinRegister(uint8_t groupNum, pin_size_t unitNum, pin_size_t maphead)
         : GroupNum(groupNum), UnitNum(unitNum), pins(creatPinArr(groupNum, unitNum, maphead)){};
-    void nopinRegister::pinMode(nopin_size_t pin, int mode) { return this->pinMode(pin, (PinMode)mode); };
-    void nopinRegister::digitalWrite(nopin_size_t pin, int status) { return this->digitalWrite(pin, (PinStatus)status); };
+    void nopinRegister::pinMode(nopin_size_t &pin, int mode) { return this->pinMode(pin, (PinMode)mode); };
+    void nopinRegister::digitalWrite(nopin_size_t &pin, int status) { return this->digitalWrite(pin, (PinStatus)status); };
     void nopinRegister::analogReadResolution(int bits) { this->analogResolution = bits > 0 && bits <= 32 ? bits : 10; };
 
     bool nopinRegister::isIn(const nopin_size_t &pin) { return pin.Port == this && pin.Idx < GroupNum * UnitNum; };
@@ -84,12 +84,12 @@ namespace _EVLK_NOPINS_
         }
     };
 
-    void o2nopin::pinMode(nopin_size_t pin, PinMode mode) { return ::pinMode(pin.Map, mode); };
-    void o2nopin::digitalWrite(nopin_size_t pin, PinStatus val) { return ::digitalWrite(pin.Map, val); };
-    PinStatus o2nopin::digitalRead(nopin_size_t pin) { return ::digitalRead(pin.Map); };
-    void o2nopin::analogWrite(nopin_size_t pin, int val) { return ::analogWrite(pin.Map, val); };
+    void o2nopin::pinMode(nopin_size_t &pin, PinMode mode) { return ::pinMode(pin.Map, mode); };
+    void o2nopin::digitalWrite(nopin_size_t &pin, PinStatus val) { return ::digitalWrite(pin.Map, val); };
+    PinStatus o2nopin::digitalRead(nopin_size_t &pin) { return ::digitalRead(pin.Map); };
+    void o2nopin::analogWrite(nopin_size_t &pin, int val) { return ::analogWrite(pin.Map, val); };
     void o2nopin::analogReference(uint8_t mode) { return ::analogReference(mode); };
-    int o2nopin::analogRead(nopin_size_t pin) { return ::analogRead(pin.Map); };
+    int o2nopin::analogRead(nopin_size_t &pin) { return ::analogRead(pin.Map); };
 
     o2nopin O2nopin;
 }
