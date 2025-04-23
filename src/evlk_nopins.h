@@ -2,88 +2,69 @@
 #define _EVLK_NOPINS_H_
 
 #include "Arduino.h"
+#include <cstdint>
 
-namespace _EVLK_NOPINS_
-{
-    class nopinRegister;
+#ifndef ARDUINO_API_H
+#ifdef EXTENDED_PIN_MODE
+typedef uint32_t pin_size_t;
+#else
+typedef uint8_t pin_size_t;
+#endif
+typedef uint8_t PinMode;
+typedef uint8_t PinStatus;
+#endif
 
-    class nopin_size_t
-    {
-    public:
-        nopinRegister *const Port;
-        const pin_size_t Idx;
-        const pin_size_t Map;
+namespace _EVLK_NOPINS_ {
 
-    public:
-        nopin_size_t(pin_size_t pin);
-        nopin_size_t(nopinRegister &port, pin_size_t idx, pin_size_t map);
-        nopin_size_t(const nopin_size_t &nopin);
+class nopinRegister;
 
-        void mode(PinMode mode);
-        void dwrite(PinStatus val);
-        PinStatus dread();
-        void awrite(int val);
-        int aread();
-    };
+struct nopin_size_t {
+  private:
+    nopinRegister *const Port;
+    const pin_size_t Idx;
 
-    void pinMode(nopin_size_t pin, PinMode mode);
-    void digitalWrite(nopin_size_t pin, PinStatus val);
-    PinStatus digitalRead(nopin_size_t pin);
-    void analogWrite(nopin_size_t pin, int val);
-    void analogReference(nopinRegister &reg, uint8_t mode);
-    int analogRead(nopin_size_t pin);
-    void pinMode(nopin_size_t pin, int mode);
-    void digitalWrite(nopin_size_t pin, int status);
+  public:
+    nopin_size_t(pin_size_t pin);
+    nopin_size_t(nopinRegister &port, pin_size_t idx);
 
-    class nopinRegister
-    {
-    private:
-        nopin_size_t **creatPinArr(uint8_t groupNum, pin_size_t unitNum);
-        nopin_size_t **creatPinArr(uint8_t groupNum, pin_size_t unitNum, pin_size_t *maps);
-        nopin_size_t **creatPinArr(uint8_t groupNum, pin_size_t unitNum, pin_size_t maphead);
+    friend void pinMode(nopin_size_t pin, PinMode mode);
+    friend void digitalWrite(nopin_size_t pin, PinStatus val);
+    friend PinStatus digitalRead(nopin_size_t pin);
+    friend void analogWrite(nopin_size_t pin, int val);
+    friend void analogReference(nopinRegister &reg, uint8_t mode);
+    friend int analogRead(nopin_size_t pin);
+    friend void pinMode(nopin_size_t pin, int mode);
+    friend void digitalWrite(nopin_size_t pin, int status);
+};
 
-        nopin_size_t **const pins;
+void pinMode(nopin_size_t pin, PinMode mode);
+void digitalWrite(nopin_size_t pin, PinStatus val);
+PinStatus digitalRead(nopin_size_t pin);
+void analogWrite(nopin_size_t pin, int val);
+void analogReference(nopinRegister &reg, uint8_t mode);
+int analogRead(nopin_size_t pin);
+void pinMode(nopin_size_t pin, int mode);
+void digitalWrite(nopin_size_t pin, int status);
 
-    protected:
-        int analogResolution;
+class nopinRegister {
+  protected:
+    int analogResolution;
 
-    public:
-        const uint8_t GroupNum;
-        const pin_size_t UnitNum;
-        nopinRegister(uint8_t groupNum, pin_size_t unitNum);
-        nopinRegister(uint8_t groupNum, pin_size_t unitNum, pin_size_t *maps);
-        nopinRegister(uint8_t groupNum, pin_size_t unitNum, pin_size_t maphead);
-        virtual ~nopinRegister();
+  public:
+    virtual void pinMode(pin_size_t pin, PinMode mode)       = 0;
+    virtual void digitalWrite(pin_size_t pin, PinStatus val) = 0;
+    virtual PinStatus digitalRead(pin_size_t pin)            = 0;
+    virtual void analogWrite(pin_size_t pin, int val)        = 0;
+    virtual void analogReference(uint8_t mode)               = 0;
+    virtual int analogRead(pin_size_t pin)                   = 0;
+    virtual void pinMode(pin_size_t pin, int mode);
+    virtual void digitalWrite(pin_size_t pin, int status);
+    virtual void digitalWrite(uint8_t mask[], int n, int status); // 小端
+    virtual void analogReadResolution(int bits);
 
-        virtual void pinMode(nopin_size_t &pin, PinMode mode) = 0;
-        virtual void digitalWrite(nopin_size_t &pin, PinStatus val) = 0;
-        virtual PinStatus digitalRead(nopin_size_t &pin) = 0;
-        virtual void analogWrite(nopin_size_t &pin, int val) = 0;
-        virtual void analogReference(uint8_t mode) = 0;
-        virtual int analogRead(nopin_size_t &pin) = 0;
-        void analogReadResolution(int bits);
-        void pinMode(nopin_size_t &pin, int mode);
-        void digitalWrite(nopin_size_t &pin, int status);
+    const nopin_size_t operator[](int i);
+};
 
-        bool isIn(const nopin_size_t &pin);
-        pin_size_t groupNum(nopin_size_t &pin);
-        pin_size_t unitNum(nopin_size_t &pin);
-        nopin_size_t *const operator[](int g);
-    };
-
-    class o2nopin : public nopinRegister
-    {
-    public:
-        o2nopin() : nopinRegister(0, 0){};
-        void pinMode(nopin_size_t &pin, PinMode mode) override;
-        void digitalWrite(nopin_size_t &pin, PinStatus val) override;
-        PinStatus digitalRead(nopin_size_t &pin) override;
-        void analogWrite(nopin_size_t &pin, int val) override;
-        void analogReference(uint8_t mode) override;
-        int analogRead(nopin_size_t &pin) override;
-    };
-
-    extern o2nopin O2nopin;
-}
+} // namespace _EVLK_NOPINS_
 
 #endif
